@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🪐星タイプ診断｜地球侵略阻止ミッション</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg: #02060f;
+  --panel: #080f1e;
+  --border: #0f2040;
+  --accent: #00c8ff;
+  --accent2: #ff6b35;
+  --accent3: #7fff6b;
+  --gold: #ffd700;
+  --text: #b8ccd8;
+  --dim: #3a5060;
+  --white: #e8f4f8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans JP', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 星フィールド */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--dur) ease-in-out infinite;
+  opacity: var(--op);
+}
+@keyframes twinkle {
+  0%,100% { opacity: var(--op); transform: scale(1); }
+  50% { opacity: calc(var(--op) * 0.3); transform: scale(0.7); }
+}
+
+/* スキャンライン */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, rgba(0,200,255,0.12), transparent);
+  animation: scan 8s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes scan { 0%{top:-5%} 100%{top:105%} }
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ヘッダー */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeDown 0.8s ease both;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.header .jaco-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 16px;
+  animation: pulse 3s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
+.header h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 5vw, 32px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.3;
+  text-shadow: 0 0 40px rgba(0,200,255,0.4);
+  margin-bottom: 8px;
+}
+.header h1 span { color: var(--gold); }
+.header .sub {
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+.loading-bar {
+  width: 200px;
+  height: 2px;
+  background: var(--border);
+  margin: 20px auto 0;
+  border-radius: 1px;
+  overflow: hidden;
+}
+.loading-bar::after {
+  content: '';
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  animation: load 2s ease-in-out infinite;
+}
+@keyframes load { 0%{width:0;margin-left:0} 50%{width:100%;margin-left:0} 100%{width:0;margin-left:100%} }
+
+/* イントロ */
+.intro {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text);
+  animation: fadeUp 0.8s 0.2s ease both;
+  position: relative;
+  overflow: hidden;
+}
+.intro::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent), transparent);
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.intro .jaco {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.intro .jaco::before { content: '🤖'; }
+
+/* 進捗 */
+.progress-wrap {
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+.progress-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--accent), var(--accent3));
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* 質問カード */
+.question-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.5s ease both;
+  transition: border-color 0.3s;
+}
+.question-card:hover { border-color: rgba(0,200,255,0.3); }
+.q-number {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+.q-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.q-sub {
+  font-size: 11px;
+  color: var(--dim);
+  margin-top: -12px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* 選択肢 */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.option-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.option-btn:hover {
+  border-color: var(--accent);
+  color: var(--white);
+  transform: translateX(4px);
+}
+.option-btn:hover::before { opacity: 0.06; }
+.option-btn.selected {
+  border-color: var(--accent);
+  color: var(--white);
+  background: rgba(0,200,255,0.08);
+}
+.option-btn .opt-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  margin-right: 8px;
+  opacity: 0.8;
+}
+
+/* ナビボタン */
+.nav-row {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+}
+.btn-primary:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,200,255,0.3);
+}
+.btn-primary:disabled {
+  background: var(--dim);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { color: var(--text); border-color: var(--dim); }
+
+/* 結果画面 */
+#result-screen {
+  display: none;
+  animation: fadeUp 0.8s ease both;
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.result-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+.result-jaco {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 28px;
+  color: var(--text);
+}
+.result-jaco strong { color: var(--accent); }
+
+.result-card {
+  background: var(--panel);
+  border-radius: 20px;
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.result-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: var(--grad);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.result-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 0 20px currentColor);
+}
+.result-type-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+.result-type-name {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 6px;
+  text-shadow: 0 0 30px currentColor;
+}
+.result-type-sub {
+  text-align: center;
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.result-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+.result-desc {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.result-advice {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.8;
+  border-left: 3px solid;
+}
+.result-advice .adv-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+/* CTA */
+.cta-block {
+  background: linear-gradient(135deg, rgba(0,200,255,0.06), rgba(255,215,0,0.06));
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.cta-jaco {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+.cta-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #ffb300);
+  color: #000;
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.25s;
+  box-shadow: 0 4px 20px rgba(255,215,0,0.2);
+}
+.cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(255,215,0,0.4);
+}
+
+.retry-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  color: var(--dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.retry-btn:hover { color: var(--text); border-color: var(--dim); }
+
+.footer-note {
+  text-align: center;
+  font-size: 10px;
+  color: var(--dim);
+  margin-top: 32px;
+  line-height: 1.8;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 1px;
+}
+
+/* hidden */
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <div class="jaco-label">《論理制御知性体J.A.C.O》診断システム起動中</div>
+    <h1>🪐 <span>星タイプ</span>診断 🌌</h1>
+    <div class="sub">地球侵略阻止ミッション｜宇宙船 ASTRO × note号</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <!-- 診断画面 -->
+  <div id="quiz-screen">
+
+    <div class="intro">
+      <div class="jaco">J.A.C.O：診断プロトコル、起動デス⚡️</div>
+      アナタがどんな「星」かを解析するため、5つの質問に答えて下サイ🛸<br>
+      正解も不正解もありまセン。<br>
+      直感で答えるのが、最も精度の高いデータが得られマス🪬🧬
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>MISSION PROGRESS</span>
+        <span id="progress-text">0 / 5</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="question-area"></div>
+
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen">
+    <div class="result-header">
+      <div class="result-label">DIAGNOSIS COMPLETE // データ解析完了</div>
+    </div>
+    <div class="result-jaco" id="result-jaco-msg"></div>
+    <div class="result-card" id="result-card">
+      <span class="result-icon" id="result-icon"></span>
+      <div class="result-type-label" id="result-type-label"></div>
+      <div class="result-type-name" id="result-type-name"></div>
+      <div class="result-type-sub" id="result-type-sub"></div>
+      <div class="result-divider"></div>
+      <div class="result-desc" id="result-desc"></div>
+      <div class="result-advice" id="result-advice">
+        <div class="adv-label" id="adv-label">💡 J.A.C.O からのアドバイス</div>
+        <div id="adv-text"></div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-jaco">🛸 宇宙人ヒマジンの宇宙船をのぞいてみル？</div>
+      <div class="cta-text">
+        アナタの「星タイプ」がわかったら、次は「自分の軌道」を見つけるタイミングデス🌌<br>
+        宇宙船『ASTRO × note号』では、より深い「星タイプ診断ガイド」と<br>
+        「自分らしさの探求ミッション」を発信中🚀⚡️
+      </div>
+      <a href="https://note.com/teabreak_invader/n/nef28646374ea" target="_blank" class="cta-btn">
+        🪐 星タイプ診断ガイドへ — noteで読む
+      </a>
+    </div>
+
+    <button class="retry-btn" onclick="restartQuiz()">
+      ↩ もう一度診断する（再スキャン）
+    </button>
+
+    <div class="footer-note">
+      《恒点観測員043号》グレイ＝ニートゥ＝ヒマジン<br>
+      NASAには通報しないでネ⚠️
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 星を生成
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2.5 + 0.5;
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${Math.random()*100}%; top:${Math.random()*100}%;
+    --dur:${Math.random()*4+2}s;
+    --op:${Math.random()*0.6+0.1};
+  `;
+  starsEl.appendChild(s);
+}
+
+// 質問データ
+const questions = [
+  {
+    text: "SNSで発信するとき、あなたが一番「楽しい」と感じる瞬間はどれですか？",
+    sub: "今の状態ではなく、「理想の瞬間」で答えて下さい🪬",
+    options: [
+      { label: "A", text: "自分の信念や意見を、言葉にしてぶつけられたとき🔥", types: [0,0,0,0,0] },
+      { label: "B", text: "誰かの言葉に触発されて、それを別の誰かへ届けられたとき🌙", types: [0,1,0,0,0] },
+      { label: "C", text: "何かを書いた後、「あ、これが自分の感情だったんだ」と気づいたとき🌫️", types: [0,0,1,0,0] },
+      { label: "D", text: "更新は少ないけど、ふとした記事が誰かに届いていたとき🪨", types: [0,0,0,1,0] },
+      { label: "E", text: "自分でも予想しなかったコンテンツが生まれて、誰かと交信が始まったとき👽️", types: [0,0,0,0,1] },
+    ]
+  },
+  {
+    text: "発信に高評価がつかないとき、あなたはどう感じますか？",
+    sub: "正直な反応を選んで下サイ🚨",
+    options: [
+      { label: "A", text: "悔しいけど、伝えたかったことは伝えた。それでいい🔥", types: [1,0,0,0,0] },
+      { label: "B", text: "誰かの役に立てなかったかな、と少し落ち込む🌙", types: [0,1,0,0,0] },
+      { label: "C", text: "そもそも自分が何を書きたかったのか、またわからなくなる🌫️", types: [0,0,1,0,0] },
+      { label: "D", text: "あまり気にしない。届く人にはいつか届く🪨", types: [0,0,0,1,0] },
+      { label: "E", text: "次は何を実験しようか、むしろワクワクする👽️", types: [0,0,0,0,1] },
+    ]
+  },
+  {
+    text: "SNSで「バズっている投稿」を見たとき、正直どんな気持ちになりますか？",
+    sub: "",
+    options: [
+      { label: "A", text: "「自分はああいうのを目指したくない」とむしろ反骨心が湧く🔥", types: [1,0,0,0,0] },
+      { label: "B", text: "「この人の想いを、もっと広めたい」と紹介したくなる🌙", types: [0,1,0,0,0] },
+      { label: "C", text: "「自分も何か発信しなきゃ」と焦るけど、何を書けばいいかわからない🌫️", types: [0,0,1,0,0] },
+      { label: "D", text: "「すごいな」と眺めつつ、自分のペースは変えない🪨", types: [0,0,0,1,0] },
+      { label: "E", text: "「なぜバズったのか」を分解して、自分なりに再構築したくなる👽️", types: [0,0,0,0,1] },
+    ]
+  },
+  {
+    text: "「あなたにとってSNS（発信）は何ですか？」と聞かれたら、一番近いのは？",
+    sub: "",
+    options: [
+      { label: "A", text: "社会や世界に、自分の考えを問いかける場所🔥", types: [1,0,0,0,0] },
+      { label: "B", text: "素晴らしい人と人を結びつける「橋」🌙", types: [0,1,0,0,0] },
+      { label: "C", text: "まだ形になっていない自分の「何か」を探す旅🌫️", types: [0,0,1,0,0] },
+      { label: "D", text: "静かに、自分の痕跡を宇宙に残す行為🪨", types: [0,0,0,1,0] },
+      { label: "E", text: "ジャンルの枠を超えた「実験の場」👽️", types: [0,0,0,0,1] },
+    ]
+  },
+  {
+    text: "もしSNSのフォロワーがゼロになってしまったら、それでも発信を続けますか？",
+    sub: "最も正直な気持ちで答えて下サイ🪬🧬",
+    options: [
+      { label: "A", text: "続ける。伝えたいことがある限り、書くのをやめる理由がない🔥", types: [1,0,0,0,0] },
+      { label: "B", text: "続けるけど、誰かとつながれなくなるのは少し寂しい🌙", types: [0,1,0,0,0] },
+      { label: "C", text: "正直わからない。誰かに読まれることが書くモチベーションかもしれない🌫️", types: [0,0,1,0,0] },
+      { label: "D", text: "続ける。どうせいつか、誰かに届くから🪨", types: [0,0,0,1,0] },
+      { label: "E", text: "続ける。むしろゼロから再構築するのが面白そう👽️", types: [0,0,0,0,1] },
+    ]
+  }
+];
+
+// タイプデータ
+const types = [
+  {
+    id: 0,
+    icon: "🔥",
+    label: "TYPE-01 // KOSEI",
+    name: "恒星型",
+    sub: "「燃やす者」",
+    color: "#ff6b35",
+    grad: "linear-gradient(135deg, #ff6b35, #ff3500)",
+    desc: `アナタは「自ら光を放つ恒星」デス🔥\n\n信念や主張がはっきりしており、「自分はこう思う」という一貫した軸を持っていマス。読者はアナタの発信を「情報」としてではなく、「あなたの言葉」として求めてくれマス🌌\n\n恒星の燃料は、心を燃やす「信念」。スキの数より「自分が伝えたかったことを伝えられたか」を重視するアナタは、本物の発信者としての器を持っていマス⚡️`,
+    advice: "自分の「問い」を立て続けることが最大の強みデス。数字に惑わされず、テーマの一貫性を大切に！アナタの言葉を待っている地球人が、必ずいマス🛸"
+  },
+  {
+    id: 1,
+    icon: "🌙",
+    label: "TYPE-02 // EISEI",
+    name: "衛星型",
+    sub: "「映す者」",
+    color: "#00c8ff",
+    grad: "linear-gradient(135deg, #00c8ff, #0060ff)",
+    desc: `アナタは「光を受け取り、違う角度で届ける衛星」デス🌙\n\n他の人の言葉に触発されてアイデアが湧き、「この人の想いを、もっと多くの人に知ってほしい」という橋渡しの精神を持っていマス✨\n\n衛星は自分では燃えません。でも――「陽の届かない場所に光を運ぶ」のは衛星だけデス。紹介記事、感想記事、コラボ――アナタが繋いだ「出会い」こそが、アナタの作品なのデス🛸`,
+    advice: "「自分オリジナルでないといけない」という呪いを手放して下さいマセ🌙 アナタが繋いだご縁が、誰かの人生を変える瞬間がありマス。その「橋」としての価値は、どんな恒星にも真似できまセン👽️"
+  },
+  {
+    id: 2,
+    icon: "🌫️",
+    label: "TYPE-03 // SEIUN",
+    name: "星雲型",
+    sub: "「漂う者」",
+    color: "#b87fff",
+    grad: "linear-gradient(135deg, #b87fff, #6030ff)",
+    desc: `アナタは「まだ形になっていない、生成中の原石」デス🌫️\n\n何を書きたいのかよくわからない、ジャンルが定まらない、投稿が不定期になりがち――そんなアナタへ伝えたいのデス。不完全は、「失敗ではありまセン」🪬\n\n星雲は、次の恒星が生まれる場所デス。モヤの中をさまよいながら書き続けることで、いつか「自分だけの核」が生まれるのデス。焦らなくていい。今は「生成中」なのデスカラ🌌`,
+    advice: "「発信ジャンルを決めなければ」というプレッシャーをひとまず横に置いて下サイ🌫️ 「今日感じたこと」をそのまま書く練習が、アナタの核を育てマス。迷子のままでいい――今のアナタにしか書けない言葉があるのデス⚡️"
+  },
+  {
+    id: 3,
+    icon: "🪨",
+    label: "TYPE-04 // SHOUWAKUSEI",
+    name: "小惑星型",
+    sub: "「存在する者」",
+    color: "#7fff6b",
+    grad: "linear-gradient(135deg, #7fff6b, #30b020)",
+    desc: `アナタは「静かに漂い、突然誰かの心に届く小惑星」デス🪨\n\n更新頻度は高くなく、フォロワー数や数字はあまり気にしない。でも書いた記事が不意に誰かに見つかる――バズらない。でも、消えない。\n\nある日突然、見知らぬ誰かの心に「ドン」と衝突し、忘れられない言葉を残す。これは小惑星にしか出せない「衝撃」デス🌌 アナタの言葉は、時間を超えて誰かに届きマス⚡️`,
+    advice: "毎日更新もバズも必要ありまセン🪨 「いつか誰かに届く」という確信を持って、自分のペースで書き続けることが最大の戦略デス。宇宙では、星の光が届くまでに何万年もかかることがありマスカラ――👽️"
+  },
+  {
+    id: 4,
+    icon: "👽️",
+    label: "TYPE-05 // UCHUUJIN",
+    name: "宇宙人型",
+    sub: "「越境する者」",
+    color: "#ffd700",
+    grad: "linear-gradient(135deg, #ffd700, #ff8c00)",
+    desc: `アナタは「既存の分類を超えた、宇宙人」デス👽️\n\n恒星でも衛星でも星雲でも小惑星でもない、独自の進化を遂げたタイプデス。ジャンルの枠を超え、予測不能なコンテンツを生み出し、誰も歩いたことのない軌道を描きマス🛸\n\n地球のSNSの「正解」には縛られまセン。銀河帝国アルゴリズムへの最大の対抗手段は、アナタ自身の「訳のわからなさ」かもしれまセン⚡️ その唯一無二の存在感が、誰かの「未知との遭遇」になるのデス🌌`,
+    advice: "「これでいいのか」と迷ったとき、それはアナタが正しい軌道にいる証拠デス👽️ 誰も歩いたことのない道だから、不安なのは当然デス。ワタシも同じデス。一緒に飛びましょウ🚀"
+  }
+];
+
+let answers = [];
+let currentQ = 0;
+let scores = [0, 0, 0, 0, 0];
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const area = document.getElementById('question-area');
+  const pct = (currentQ / questions.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${currentQ} / ${questions.length}`;
+
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="q-number">QUESTION ${String(currentQ+1).padStart(2,'0')} // ${currentQ+1} OF 5</div>
+      <div class="q-text">${q.text}</div>
+      ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+      <div class="options" id="options">
+        ${q.options.map((o,i) => `
+          <button class="option-btn" onclick="selectOption(${i})" id="opt-${i}">
+            <span class="opt-label">${o.label}</span>${o.text}
+          </button>
+        `).join('')}
+      </div>
+      <div class="nav-row">
+        ${currentQ > 0 ? `<button class="btn btn-secondary" onclick="prevQuestion()">← 戻る</button>` : ''}
+        <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>
+          ${currentQ < questions.length - 1 ? '次の質問 →' : '診断結果を見る 🚀'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  // 既に回答済みなら選択状態を復元
+  if (answers[currentQ] !== undefined) {
+    document.getElementById(`opt-${answers[currentQ]}`).classList.add('selected');
+    document.getElementById('next-btn').disabled = false;
+  }
+}
+
+function selectOption(idx) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(`opt-${idx}`).classList.add('selected');
+  answers[currentQ] = idx;
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextQuestion() {
+  if (answers[currentQ] === undefined) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  // スコア集計
+  scores = [0, 0, 0, 0, 0];
+  answers.forEach((ansIdx, qIdx) => {
+    const typeWeights = questions[qIdx].options[ansIdx].types;
+    // 選択肢のインデックスからタイプを判定
+    scores[ansIdx] += 2;
+    // ボーナス：質問ごとの重み
+    if (qIdx === 1 || qIdx === 4) scores[ansIdx] += 1;
+  });
+
+  // 最高スコアのタイプ
+  let maxScore = -1;
+  let resultType = 0;
+  scores.forEach((s, i) => {
+    if (s > maxScore) { maxScore = s; resultType = i; }
+  });
+
+  const t = types[resultType];
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  document.getElementById('result-jaco-msg').innerHTML = `
+    <strong>🤖 J.A.C.O：データ解析完了デス⚡️</strong><br>
+    アナタの星タイプが特定されましタ🛸 解析精度：<strong style="color:var(--accent)">99.7%</strong>（宇宙人保証）<br>
+    ……ただし、宇宙は複雑デス。これはあくまでも「鏡」。アナタ自身の感覚を大切に🪬🧬
+  `;
+
+  document.getElementById('result-icon').textContent = t.icon;
+  document.getElementById('result-type-label').innerHTML = `<span style="color:${t.color}">${t.label}</span>`;
+  document.getElementById('result-type-name').innerHTML = `<span style="color:${t.color}">${t.name}</span>`;
+  document.getElementById('result-type-sub').textContent = t.sub;
+
+  const card = document.getElementById('result-card');
+  card.style.setProperty('--grad', t.grad);
+  card.style.boxShadow = `0 0 60px ${t.color}18, 0 0 20px ${t.color}10`;
+
+  document.getElementById('result-desc').innerHTML = t.desc.replace(/\n/g, '<br>');
+  document.getElementById('result-advice').style.borderLeftColor = t.color;
+  document.getElementById('adv-label').style.color = t.color;
+  document.getElementById('adv-text').textContent = t.advice;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  answers = [];
+  currentQ = 0;
+  scores = [0,0,0,0,0];
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 初期化
+renderQuestion();
+</script>
+</body>
+</html>
