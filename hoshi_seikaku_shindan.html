@@ -5,326 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌌 星の性格診断｜地球侵略阻止ミッション</title>
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@FixedPoint043">
-<meta property="og:title" content="🌌 星の性格診断｜地球侵略阻止ミッション">
-<meta property="og:description" content="アナタの性格、宇宙人に聞いてみる？1/49のマトリクスから故郷の星をスキャン！🛸">
-<meta property="og:image" content="https://stationaryobserverno043.github.io/hoshi-shindan/ogp_seikaku.png">
-<meta property="og:url" content="https://stationaryobserverno043.github.io/hoshi-shindan/hoshi_seikaku_shindan.html">
 <meta property="og:type" content="website">
+<meta property="og:title" content="🌌 星の性格診断｜地球侵略阻止ミッション">
+<meta property="og:description" content="アナタの故郷の星と種族を解析します。">
+<meta property="og:url" content="https://stationaryobserverno043.github.io/hoshi-shindan/hoshi_seikaku_shindan.html">
+<meta property="og:image" content="https://stationaryobserverno043.github.io/hoshi-shindan/ogp_seikaku.png">
+<meta name="twitter:card" content="summary_large_image">
 
 <style>
-  :root {
-    --bg-dark: #070913;
-    --card-bg: rgba(16, 20, 38, 0.6);
-    --text-main: #f1f3f9;
-    --text-mut: #8da2fb;
-    --accent: #5e7bf3;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background-color: var(--bg-dark);
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(94,123,243,0.15) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(141,162,251,0.1) 0%, transparent 40%);
-    background-attachment: fixed;
-    color: var(--text-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.6;
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-  .container {
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 40px;
-    position: relative;
-    z-index: 2;
-  }
-  header {
-    text-align: center;
-    margin: 20px 0 30px 0;
-  }
-  h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    background: linear-gradient(135deg, #fff 0%, var(--text-mut) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-  }
-  .subtitle {
-    font-size: 0.85rem;
-    color: var(--text-mut);
-    letter-spacing: 0.1em;
-  }
-  .card {
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.06);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    margin-bottom: 20px;
-  }
-  .q-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #fff;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .q-num {
-    background: rgba(94,123,243,0.2);
-    color: var(--text-mut);
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-weight: 700;
-    margin-top: 2px;
-  }
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .opt-btn {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px;
-    padding: 14px 16px;
-    color: var(--text-main);
-    font-size: 0.95rem;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-  .opt-btn:hover {
-    background: rgba(94,123,243,0.15);
-    border-color: rgba(94,123,243,0.4);
-    transform: translateY(-1px);
-  }
-  .progress-bar {
-    width: 100%;
-    height: 4px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 2px;
-    margin-top: 20px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--text-mut));
-    width: 0%;
-    transition: width 0.3s ease;
-  }
-  .result-card {
-    display: none;
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.06);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 30px 24px;
-    text-align: center;
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .r-icon {
-    font-size: 3.2rem;
-    margin-bottom: 12px;
-  }
-  .r-tag {
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .r-name {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: #fff;
-  }
-  .r-sub {
-    font-size: 0.9rem;
-    color: var(--text-mut);
-    margin-bottom: 24px;
-  }
-  .r-desc {
-    font-size: 0.95rem;
-    text-align: left;
-    background: rgba(0,0,0,0.15);
-    padding: 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.03);
-    margin-bottom: 24px;
-    white-space: pre-wrap;
-  }
-  .r-adv {
-    text-align: left;
-    background: rgba(94,123,243,0.05);
-    padding: 16px;
-    border-radius: 10px;
-    border-left: 4px solid var(--accent);
-    margin-bottom: 24px;
-  }
-  .r-adv-lbl {
-    font-size: 0.8rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .r-adv-txt {
-    font-size: 0.9rem;
-    color: #cbd5e1;
-  }
-  .share-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    background: #fff;
-    color: #000;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .share-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
-  footer {
-    text-align: center;
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.25);
-    margin-top: auto;
-    padding: 20px 0;
-    position: relative;
-    z-index: 2;
-  }
+  :root { --bg: #02060f; --panel: #080f1e; --border: #0f2040; --accent: #00c8ff; --text: #b8ccd8; }
+  body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 20px; }
+  .container { max-width: 600px; margin: 0 auto; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+  .share-img-block { width: 100%; margin: 20px 0; border-radius: 12px; overflow: hidden; }
+  .share-img { width: 100%; display: block; }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
-    <h1>🌌 星の性格診断</h1>
-    <div class="subtitle">地球侵略阻止ミッション</div>
-  </header>
+  <div id="quiz-screen">...</div>
 
-  <div id="qcard" class="card">
-    <div class="q-title">
-      <span id="qnum" class="q-num">Q1</span>
-      <span id="qtext">読み込み中...</span>
+  <div id="result-screen" class="hidden">
+    <div id="rcard" class="card">
+      <div id="ricon"></div>
+      <div id="rname"></div>
+      <div id="rdesc"></div>
     </div>
-    <div id="opts" class="options"></div>
-    <div class="progress-bar">
-      <div id="pfill" class="progress-fill"></div>
-    </div>
-  </div>
 
-  <div id="rcard" class="result-card">
-    <div id="ricon" class="r-icon">🛸</div>
-    <div id="rtag" class="r-tag">PLANET</div>
-    <div id="rname" class="r-name">解析完了</div>
-    <div id="rsub" class="r-sub">サブタイトル</div>
-    <div id="rdesc" class="r-desc">説明文</div>
-    <div id="radv" class="r-adv">
-      <div id="radv-lbl" class="r-adv-lbl">メッセージ</div>
-      <div id="radv-txt" class="r-adv-txt">アドバイス</div>
+    <div class="share-img-block">
+      <img src="ogp_seikaku.png" alt="診断結果" class="share-img">
     </div>
-    <a id="x-link" class="share-btn" href="#" target="_blank">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      結果をXに報告する
-    </a>
   </div>
 </div>
 
-<footer>&copy; 地球侵略阻止ミッション 定点観測所</footer>
-
 <script>
-// 質問データデス (5問デス)
-const questions = [
-  {
-    text: "新しく未開の惑星（コミュニティ）を見つけマシタ。アナタならどうシマスか？",
-    opts: [
-      { text: "まずは軌道上からじっくり観察し、住民の生態を分析する", val: "A" },
-      { text: "お土産を持って真っ先に着陸し、元気に挨拶して回りる", val: "B" },
-      { text: "その惑星のインフラやルールを整え、住みやすく管理し始める", val: "C" },
-      { text: "特に気にせず、自分の宇宙船のメンテナンスを黙々と続ける", val: "D" }
-    ]
-  },
-  {
-    text: "母艦の通信ログ（SNS）を見ていたら、おかしな暗号（トレンド）が流行っていマス。",
-    opts: [
-      { text: "暗号の発生源と、流行した数理的ロジックを突き止めたくなる", val: "A" },
-      { text: "「これ面白い！」と、自分もすぐに真似して暗号で発信してみる", val: "B" },
-      { text: "タイムラインが乱れるので、綺麗に整理整頓するか静観する", val: "C" },
-      { text: "流行りには乗らず、自分が本当に書きたいログだけを淡々と残す", val: "D" }
-    ]
-  },
-  {
-    text: "宇宙嵐（トラブルや炎上）が接近中デス！コックピットでのアナタの行動は？",
-    opts: [
-      { text: "嵐のデータと進路を予測し、安全なシミュレーションを組み立てる", val: "A" },
-      { text: "「みんな大丈夫！？」とクルーに声をかけ、励まして回る", val: "B" },
-      { text: "管制塔として的確な指示を出し、全員の配置を統率する", val: "C" },
-      { text: "ハッチを閉めてシェルターに篭り、嵐が過ぎ去るまで読書でもする", val: "D" }
-    ]
-  },
-  {
-    text: "地球のパパやママ（他のユーザー）から「育児ミッションが過酷デス…」とSOSを受信シマシタ。",
-    opts: [
-      { text: "効率的なタスク分散法や、便利な自動化ツールの情報をそっと送る", val: "A" },
-      { text: "「本当にお疲れ様デス！夜食にヒップホップでも聴きまショウ！」と共感する", val: "B" },
-      { text: "相談室（Forms）を開設し、構造的な解決へのロードマップを示す", val: "C" },
-      { text: "言葉の代わりに、静かで温かいお茶（余白の時間）をそっと差し出す", val: "D" }
-    ]
-  },
-  {
-    text: "アナタにとって、この「地球侵略阻止ミッション（SNS）」の一番の目的は何デスか？",
-    opts: [
-      { text: "地球人の面白い生態データ（文脈）をたくさん収集すること", val: "A" },
-      { text: "色んな星のクルーと繋がって、ゴキゲンな内輪ノリを楽しむこと", val: "B" },
-      { text: "静かで noiseless な、誰の邪魔も入らない最強の秘密基地を作ること", val: "C" },
-      { text: "自分という存在の座標を、宇宙の定点としてただ観測し続けること", val: "D" }
-    ]
+  function showResult() {
+    document.getElementById('result-screen').classList.remove('hidden');
+    // 結果カードへスクロール
+    document.getElementById('rcard').scrollIntoView({ behavior: 'smooth' });
   }
-];
-
-// 結果データデス (惑星7種デス)
-const planets = {
-  "A": { icon: "🪐", tag: "Planet: Logasius", name: "ロガシウス星", sub: "【深淵の観測者】", grad: "linear-gradient(135deg, #2e1065 0%, #020617 100%)", color: "#a855f7", desc: "アナタの魂は、圧倒的な知性と分析力を持つ『ロガシウス星』に属していマス。タイムラインを冷徹にスキャンし、物事の本質やデータ、美しい文脈を見つけ出す天才デス。ノイズに惑わされず、あえて一歩引いた特等席から世界を観察する静かな引力を持っていマス。" },
-  "B": { icon: "☀️", tag: "Planet: Zed", name: "ゼド星", sub: "【共鳴の恒星】", grad: "linear-gradient(135deg, #7c2d12 0%, #020617 100%)", color: "#f97316", desc: "アナタの魂は、周囲に強いエネルギーと光を与える『ゼド星』に属していマス。お祭りの中心にいたり、楽しい内輪ノリを自ら作り出すゴキゲンな太陽のような存在デス。アナタの発信は多くの地球人の心を弾ませ、孤独な夜の育児ミッションを優しく照らし出す力がありマス。" },
-  "C": { icon: "🛡️", tag: "Planet: Quadun", name: "クワドゥン星", sub: "【秩序の母艦】", grad: "linear-gradient(135deg, #1e3a8a 0%, #020617 100%)", color: "#3b82f6", desc: "アナタの魂は、強固なインフラと規律を重んじる『クワドゥン星』に属していマス。カオスなタイムラインの中に美しくnoiselessな構造（ Forms や相談室）を設計し、人々を正しい航路へと導く頼れる指揮官デス。アナタの存在自体が、荒れ狂う地球の荒波のセーフティネットになっていマス。" },
-  "D": { icon: "🛸", tag: "Planet: Milzem", name: "ミルゼム星", sub: "【無垢の漂流星】", grad: "linear-gradient(135deg, #065f46 0%, #020617 100%)", color: "#10b981", desc: "アナタの魂は、何者にも縛られず自由の海を泳ぐ『ミルゼム星』に属していマス。クラゲのように宇宙の潮流に身を任せ、自分だけの『 noiseless な余白』を何よりも愛する自由人デス。誰かと競うことなく、静かで心地よい独自の周波数を保ったまま、穏やかな余白を周囲に分け与えマス。" }
-};
-
-// 種族データデス (簡易マトリクス用: 多数決で決定デス)
-const races = {
-  "A": { icon: "🧠", tag: "Race: Scholar", name: "学者種族", sub: "データスキャナー", adv: "知識の深さは最強の武器ですが、地球人には時々難しすぎる暗号に見えることも。たまにはポップな絵文字という擬態を使ってソフトに交信してみまショウ。" },
-  "B": { icon: "🎤", tag: "Race: Bard", name: "吟遊詩人種族", sub: "ゴキゲン・スピーカー", adv: "アナタの放つ楽しいビート（言葉）は最高のリハビリデス！ただし、電力を使いすぎて自家発電（ソロ parenting ）で力尽きないよう、時にはコックピットを完全消灯して休んで下サイ。" },
+</script>
+</body>
+</html>
+ン・スピーカー", adv: "アナタの放つ楽しいビート（言葉）は最高のリハビリデス！ただし、電力を使いすぎて自家発電（ソロ parenting ）で力尽きないよう、時にはコックピットを完全消灯して休んで下サイ。" },
   "C": { icon: "🛠️", tag: "Race: Architect", name: "建築家種族", sub: "ノイズレス・デザイナー", adv: "完璧な設計図をビルドできるアナタデスが、地球人は不完全な『余白』にこそ愛着を抱く生き物デス。あえて未完成のハッチを1つ残しておくと、より強力なアブダクションが成功シマス。" },
   "D": { icon: "🐾", tag: "Race: Observer", name: "定点観測種族", sub: "クワイエット・ベア", adv: "静けさと noiseless な authoritative は完璧デス。アナタの静かなログ（沈黙）自体がメッセージになっていマス。そのまま、あなただけの心地よい航路の座標を維持して下サイ。" }
 };
